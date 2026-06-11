@@ -1,0 +1,33 @@
+{
+  "name": "newforma-postman-ai-handoff-demo",
+  "version": "1.0.0",
+  "description": "Demo: a developer asks their AI assistant to make a branch QA-ready, and Postman becomes the consistent QA handoff layer.",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.17"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "build": "tsc -p tsconfig.json",
+    "test": "tsx --test tests/api.test.ts",
+    "typecheck": "tsc -p tsconfig.scripts.json --noEmit",
+    "generate:collection": "tsx scripts/generate-postman-collection.ts",
+    "sync:postman": "tsx scripts/sync-postman-workspace.ts",
+    "qa:summary": "tsx scripts/qa-handoff-summary.ts",
+    "make:qa-ready": "tsx scripts/make-qa-ready.ts",
+    "test:postman": "tsx scripts/run-postman-tests.ts"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/newman": "^5.3.6",
+    "@types/node": "^20.17.0",
+    "newman": "^6.2.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}

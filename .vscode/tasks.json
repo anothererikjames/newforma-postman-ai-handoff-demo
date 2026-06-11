@@ -1,0 +1,33 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run API",
+      "type": "shell",
+      "command": "npm run dev",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "panel": "dedicated", "reveal": "always" }
+    },
+    {
+      "label": "Make branch QA-ready",
+      "type": "shell",
+      "command": "npm run make:qa-ready",
+      "problemMatcher": [],
+      "presentation": { "panel": "dedicated", "reveal": "always" }
+    },
+    {
+      "label": "Generate Postman collection",
+      "type": "shell",
+      "command": "npm run generate:collection",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Postman tests",
+      "type": "shell",
+      "command": "npm run test:postman",
+      "problemMatcher": [],
+      "presentation": { "panel": "dedicated", "reveal": "always" }
+    }
+  ]
+}

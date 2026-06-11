@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "postman.postman-for-vscode",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode"
+  ]
+}

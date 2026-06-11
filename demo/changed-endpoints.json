@@ -1,0 +1,133 @@
+{
+  "$comment": "Demo fixture. In a real pipeline this would be produced by diffing the branch against main (routes, OpenAPI, or annotations). It simulates 'changed endpoint detection' for the QA-handoff flow.",
+  "branch": "feature/document-search-and-submittals",
+  "baseBranch": "main",
+  "detectedAt": "2026-06-10T17:00:00.000Z",
+  "endpoints": [
+    {
+      "id": "search-project-documents",
+      "change": "added",
+      "name": "Search project documents",
+      "method": "POST",
+      "path": "/projects/{{projectId}}/documents/search",
+      "folder": "Project Documents",
+      "kind": "search",
+      "auth": true,
+      "description": "Full-text + facet search over a project's documents. Empty matches return 200 with an empty results array, never 404.",
+      "requestBody": {
+        "contentType": "application/json",
+        "schema": {
+          "query": { "type": "string", "required": false, "description": "Matches against title and fileName (case-insensitive)." },
+          "discipline": { "type": "string", "required": false, "enum": ["Architectural", "Structural", "Mechanical", "Electrical", "Plumbing", "Civil"] },
+          "status": { "type": "string", "required": false, "enum": ["Draft", "Issued for Review", "Approved", "Superseded"] },
+          "page": { "type": "integer", "required": false, "minimum": 1, "default": 1 },
+          "pageSize": { "type": "integer", "required": false, "minimum": 1, "maximum": 100, "default": 25 }
+        },
+        "example": {
+          "query": "mechanical",
+          "discipline": "Mechanical",
+          "status": "Issued for Review",
+          "page": 1,
+          "pageSize": 25
+        }
+      },
+      "success": {
+        "status": 200,
+        "requiredFields": ["results", "total", "page", "pageSize"],
+        "example": {
+          "results": [
+            {
+              "id": "DOC-9001",
+              "projectId": "PRJ-1001",
+              "title": "Level 3 Mechanical Floor Plan",
+              "discipline": "Mechanical",
+              "status": "Issued for Review",
+              "revision": "C",
+              "fileName": "M-301_Level3_Mechanical_Plan_RevC.pdf",
+              "author": "J. Okafor",
+              "updatedAt": "2026-05-28T14:32:00.000Z"
+            }
+          ],
+          "total": 1,
+          "page": 1,
+          "pageSize": 25
+        }
+      },
+      "errorCases": [
+        { "type": "missing-auth", "status": 401, "errorCode": "UNAUTHORIZED" },
+        {
+          "type": "malformed-body",
+          "status": 400,
+          "errorCode": "VALIDATION_ERROR",
+          "exampleBody": { "query": 12345, "pageSize": "lots" }
+        },
+        { "type": "unknown-resource", "status": 404, "errorCode": "NOT_FOUND", "note": "Unknown projectId" },
+        {
+          "type": "empty-results",
+          "status": 200,
+          "exampleBody": { "query": "no-such-document-zzz" },
+          "note": "No matches is a success case: 200 with results: [] and total: 0."
+        }
+      ]
+    },
+    {
+      "id": "create-submittal",
+      "change": "added",
+      "name": "Create submittal",
+      "method": "POST",
+      "path": "/projects/{{projectId}}/submittals",
+      "folder": "Project Submittals",
+      "kind": "create",
+      "auth": true,
+      "description": "Creates a submittal in a project. New submittals start with status 'Open' and revision '1'.",
+      "requestBody": {
+        "contentType": "application/json",
+        "schema": {
+          "title": { "type": "string", "required": true },
+          "discipline": { "type": "string", "required": true, "enum": ["Architectural", "Structural", "Mechanical", "Electrical", "Plumbing", "Civil"] },
+          "specSection": { "type": "string", "required": false, "description": "CSI spec section, e.g. '23 73 13'." },
+          "dueDate": { "type": "string", "required": false, "format": "YYYY-MM-DD" },
+          "reviewer": { "type": "string", "required": false },
+          "description": { "type": "string", "required": false }
+        },
+        "example": {
+          "title": "Air Handling Unit Product Data - AHU-4",
+          "discipline": "Mechanical",
+          "specSection": "23 73 13",
+          "dueDate": "2026-07-01",
+          "reviewer": "K. Demers"
+        }
+      },
+      "success": {
+        "status": 201,
+        "idField": "id",
+        "idPrefix": "SUB-",
+        "requiredFields": ["id", "projectId", "title", "discipline", "status", "revision", "dueDate", "reviewer", "createdAt"],
+        "example": {
+          "id": "SUB-7003",
+          "projectId": "PRJ-1001",
+          "title": "Air Handling Unit Product Data - AHU-4",
+          "discipline": "Mechanical",
+          "specSection": "23 73 13",
+          "status": "Open",
+          "revision": "1",
+          "dueDate": "2026-07-01",
+          "reviewer": "K. Demers",
+          "submittedBy": "API Client",
+          "createdAt": "2026-06-10T17:01:00.000Z"
+        }
+      },
+      "errorCases": [
+        { "type": "missing-auth", "status": 401, "errorCode": "UNAUTHORIZED" },
+        {
+          "type": "malformed-body",
+          "status": 400,
+          "errorCode": "VALIDATION_ERROR",
+          "exampleBody": { "dueDate": "not-a-date" },
+          "note": "Missing required title/discipline plus a bad dueDate."
+        },
+        { "type": "unknown-resource", "status": 404, "errorCode": "NOT_FOUND", "note": "Unknown projectId" }
+      ]
+    }
+  ]
+}

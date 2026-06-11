@@ -1,0 +1,52 @@
+name: QA Handoff
+
+# Demonstrates that the same "make this branch QA-ready" flow that a developer
+# triggers from their AI assistant also runs headless in CI. No Postman
+# secrets are required by default — the sync step runs in dry-run mode and the
+# collection/environment/summary are uploaded as build artifacts for QA.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  qa-handoff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (TypeScript)
+        run: npm run build
+
+      - name: Run API tests
+        run: npm test
+
+      - name: Make branch QA-ready (generate collection + summary, dry-run sync)
+        run: npm run make:qa-ready
+        # --- Optional: live sync to the Postman QA workspace ---
+        # Uncomment and add the repository secrets to push the collection
+        # straight into the shared QA workspace instead of dry-run:
+        #
+        # env:
+        #   POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+        #   POSTMAN_WORKSPACE_ID: ${{ secrets.POSTMAN_WORKSPACE_ID }}
+
+      - name: Upload QA handoff artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-handoff
+          path: |
+            postman/*.postman_collection.json
+            postman/*.postman_environment.json
+            demo/qa-handoff-summary.md
+          if-no-files-found: error

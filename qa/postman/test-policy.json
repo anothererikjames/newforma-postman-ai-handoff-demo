@@ -1,0 +1,57 @@
+{
+  "$comment": "QA's standard test policy. The collection generator reads this to decide which test templates are injected into which requests. Each generated request is tagged (happy-path, missing-auth, malformed-body, unknown-resource, empty-results, create) and templates are matched against those tags.",
+  "version": 1,
+  "templatesDir": "qa/postman/test-templates",
+  "defaults": {
+    "maxResponseMs": 800
+  },
+  "policies": [
+    {
+      "template": "response-time",
+      "appliesTo": ["*"],
+      "params": { "maxResponseMs": 800 },
+      "rationale": "Every request gets a latency budget so slow regressions surface in the QA run."
+    },
+    {
+      "template": "standard-error-shape",
+      "appliesTo": ["*"],
+      "rationale": "Every endpoint must return { error: { code, message } } on failure; passes trivially on success."
+    },
+    {
+      "template": "status-success",
+      "appliesTo": ["happy-path"],
+      "rationale": "Happy-path requests assert their exact expected status code and JSON content type."
+    },
+    {
+      "template": "schema-validation",
+      "appliesTo": ["happy-path"],
+      "requires": "requiredFields",
+      "rationale": "Happy-path responses with a declared shape must contain all expected fields."
+    },
+    {
+      "template": "auth-required",
+      "appliesTo": ["missing-auth"],
+      "rationale": "Every authenticated endpoint gets a no-token negative request expecting 401 UNAUTHORIZED."
+    },
+    {
+      "template": "forbidden-or-not-found",
+      "appliesTo": ["unknown-resource"],
+      "rationale": "Unknown IDs must return 403/404 with the standard error shape, never a 500."
+    },
+    {
+      "template": "validation-error",
+      "appliesTo": ["malformed-body"],
+      "rationale": "Endpoints that accept a body get a malformed-body negative request expecting 400 VALIDATION_ERROR with field details."
+    },
+    {
+      "template": "empty-results",
+      "appliesTo": ["empty-results"],
+      "rationale": "Search endpoints must treat zero matches as 200 + empty array, never 404."
+    },
+    {
+      "template": "create-resource",
+      "appliesTo": ["create"],
+      "rationale": "Create endpoints must return 201 with an ID; the ID is saved as a collection variable for chained requests."
+    }
+  ]
+}
