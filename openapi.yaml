@@ -1,0 +1,223 @@
+# OpenAPI contract for the Newforma Project APIs demo.
+# Generated to match the actual Express implementation in src/ — the same
+# contract that lands in the Postman QA workspace's Spec Hub.
+# All data is fictional and demo-only.
+openapi: 3.0.3
+info:
+  title: Newforma Project APIs
+  description: >
+    Fictional project document management API used for the QA handoff demo.
+    Developers change endpoints here; "make this branch QA-ready" lands the
+    matching collection, tests, and examples in the Postman QA workspace.
+  version: 1.1.0
+servers:
+  - url: http://localhost:3000
+    description: Local demo server
+tags:
+  - name: Health
+  - name: Project Documents
+  - name: Project Submittals
+security:
+  - bearerAuth: []
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Service health
+      description: Liveness probe. The only unauthenticated endpoint.
+      operationId: getHealth
+      security: []
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+  /projects/{projectId}/documents/{documentId}:
+    get:
+      tags: [Project Documents]
+      summary: Get a project document
+      description: Returns a single document within a project.
+      operationId: getProjectDocument
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - name: documentId
+          in: path
+          required: true
+          schema: { type: string, example: DOC-9001 }
+      responses:
+        "200":
+          description: The document
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProjectDocument" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /projects/{projectId}/documents/search:
+    post:
+      tags: [Project Documents]
+      summary: Search project documents
+      description: >
+        CHANGED in this branch — filterable document search with pagination.
+        Empty matches return 200 with an empty results array.
+      operationId: searchProjectDocuments
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/DocumentSearchRequest" }
+      responses:
+        "200":
+          description: Search results (possibly empty)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DocumentSearchResponse" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /projects/{projectId}/submittals:
+    post:
+      tags: [Project Submittals]
+      summary: Create a submittal
+      description: CHANGED in this branch — creates a submittal for review.
+      operationId: createSubmittal
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateSubmittalRequest" }
+      responses:
+        "201":
+          description: Submittal created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Submittal" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /projects/{projectId}/submittals/{submittalId}:
+    get:
+      tags: [Project Submittals]
+      summary: Get a submittal
+      operationId: getSubmittal
+      description: Returns a single submittal within a project.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - name: submittalId
+          in: path
+          required: true
+          schema: { type: string, example: SUB-7001 }
+      responses:
+        "200":
+          description: The submittal
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Submittal" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Demo token `demo-token`
+  parameters:
+    ProjectId:
+      name: projectId
+      in: path
+      required: true
+      schema: { type: string, example: PRJ-1001 }
+  responses:
+    Unauthorized:
+      description: Missing or invalid bearer token
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ApiError" }
+    NotFound:
+      description: Unknown project or resource ID
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ApiError" }
+    ValidationError:
+      description: Malformed request body
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ApiError" }
+  schemas:
+    ApiError:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code: { type: string, example: VALIDATION_ERROR }
+            message: { type: string }
+            details:
+              type: array
+              items:
+                type: object
+                properties:
+                  field: { type: string }
+                  message: { type: string }
+    ProjectDocument:
+      type: object
+      properties:
+        id: { type: string, example: DOC-9001 }
+        projectId: { type: string, example: PRJ-1001 }
+        title: { type: string, example: Structural Steel Shop Drawings }
+        discipline: { type: string, example: Structural }
+        status: { type: string, example: Approved }
+        revision: { type: string, example: C }
+        fileName: { type: string, example: steel-shop-drawings-rev-c.pdf }
+        author: { type: string, example: Demo Author }
+        updatedAt: { type: string, format: date-time }
+    DocumentSearchRequest:
+      type: object
+      properties:
+        query: { type: string }
+        discipline: { type: string }
+        status: { type: string }
+        page: { type: integer, minimum: 1, default: 1 }
+        pageSize: { type: integer, minimum: 1, default: 25 }
+    DocumentSearchResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items: { $ref: "#/components/schemas/ProjectDocument" }
+        total: { type: integer }
+        page: { type: integer }
+        pageSize: { type: integer }
+    CreateSubmittalRequest:
+      type: object
+      required: [title, discipline]
+      properties:
+        title: { type: string, example: Curtain Wall Mockup }
+        discipline: { type: string, example: Architectural }
+        specSection: { type: string, example: 08 44 13 }
+        dueDate: { type: string, format: date, example: "2026-07-15" }
+        reviewer: { type: string, example: Demo Reviewer }
+        description: { type: string }
+    Submittal:
+      type: object
+      properties:
+        id: { type: string, example: SUB-7001 }
+        projectId: { type: string, example: PRJ-1001 }
+        title: { type: string }
+        discipline: { type: string }
+        specSection: { type: string, nullable: true }
+        status: { type: string, example: Pending Review }
+        revision: { type: string, example: A }
+        dueDate: { type: string, nullable: true }
+        reviewer: { type: string, nullable: true }
+        submittedBy: { type: string }
+        createdAt: { type: string, format: date-time }
