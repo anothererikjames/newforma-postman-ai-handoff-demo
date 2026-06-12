@@ -12,6 +12,7 @@
  * destination for the QA handoff.
  */
 
+import "./load-env";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { COLLECTION_NAME, COLLECTION_PATH, ENVIRONMENT_NAME, REPO_ROOT } from "./generate-postman-collection";

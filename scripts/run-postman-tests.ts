@@ -12,6 +12,7 @@
  * Run: npm run test:postman   (with `npm run dev` running in another terminal)
  */
 
+import "./load-env";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { spawnSync } from "node:child_process";
