@@ -38,7 +38,7 @@ If you run the API on another port, change `baseUrl` (and start the API with `AP
 2. Right-click the collection → **Run collection**.
 3. Keep default settings, click **Run**. Everything should be green: happy paths, 401s, 400s, 404s, and the empty-search case are all *expected* and asserted.
 
-CLI equivalent: `npm run test:postman` (Newman with the same files).
+CLI equivalent: `npm run test:postman` (the Postman CLI with the same files).
 
 ## 5. Live sync via the Postman API (optional)
 

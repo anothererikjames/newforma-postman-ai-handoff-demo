@@ -105,7 +105,7 @@ ${runStatus}
 \`\`\`bash
 npm install
 npm run dev            # terminal 1 — starts the API on :3000
-npm run test:postman   # terminal 2 — Newman runs the collection with the local environment
+npm run test:postman   # terminal 2 — the Postman CLI runs the collection with the local environment
 \`\`\`
 
 ---

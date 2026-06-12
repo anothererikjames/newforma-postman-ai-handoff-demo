@@ -26,7 +26,7 @@ Expected behavior: the assistant runs `npm run make:qa-ready`, then `npm run tes
 
 ## 6. Run the collection and summarize failures
 
-> Run the generated Postman collection against my local API with Newman and summarize the results. If any assertions fail, group the failures by endpoint, explain the likely cause in one line each, and tell me whether the fix belongs in the API code or in the tests.
+> Run the generated Postman collection against my local API with the Postman CLI and summarize the results. If any assertions fail, group the failures by endpoint, explain the likely cause in one line each, and tell me whether the fix belongs in the API code or in the tests.
 
 ## 7. Convert the handoff into a PR comment
 

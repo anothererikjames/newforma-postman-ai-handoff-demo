@@ -17,7 +17,8 @@
     "sync:postman": "tsx scripts/sync-postman-workspace.ts",
     "qa:summary": "tsx scripts/qa-handoff-summary.ts",
     "make:qa-ready": "tsx scripts/make-qa-ready.ts",
-    "test:postman": "tsx scripts/run-postman-tests.ts"
+    "test:postman": "tsx scripts/run-postman-tests.ts",
+    "test:postman:newman": "tsx scripts/run-postman-tests.ts --newman"
   },
   "dependencies": {
     "express": "^4.21.2"

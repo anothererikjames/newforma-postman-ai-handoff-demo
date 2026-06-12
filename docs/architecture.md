@@ -53,7 +53,7 @@
                │  Environment: Newforma QA    │
                │  Standard tests on every req │
                └──────────────┬───────────────┘
-                              │  one click / newman run
+                              │  one click / the Postman CLI run
                               ▼
                        QA runs the collection
               (executable handoff, consistent every time)
@@ -70,5 +70,5 @@ Many surfaces, one destination. The developer-side trigger is interchangeable; t
    - verifies the environment file,
    - syncs to the QA workspace (dry-run without credentials),
    - writes `demo/qa-handoff-summary.md`.
-3. Optionally, assistant runs `npm run test:postman` (Newman) to verify everything is green against the local API.
+3. Optionally, assistant runs `npm run test:postman` (the Postman CLI) to verify everything is green against the local API.
 4. The summary lands on the PR; QA opens the workspace and runs the collection.

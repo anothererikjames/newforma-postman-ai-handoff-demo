@@ -40,7 +40,7 @@
 
 ## 3:00 — What QA sees
 
-*Screen: collection imported in Postman (or the generated JSON), then the collection run / Newman output.*
+*Screen: collection imported in Postman (or the generated JSON), then the collection run / the Postman CLI output.*
 
 > "QA opens the workspace and this is what's waiting: an executable collection with examples on every request, and one click to run it. Every assertion is QA's own standard — consistent across every team that hands off this way. Let's run it… all green, against the real running API."
 

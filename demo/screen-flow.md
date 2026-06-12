@@ -35,7 +35,7 @@ What to have on screen, in order. Pre-flight: `npm install` done, `npm run dev` 
 ## Screen 6 — The collection run
 
 - **Preferred:** Postman Collection Runner with the **Newforma QA Local** environment — all green.
-- **Fallback:** terminal: `npm run test:postman` — Newman CLI output, every assertion passing against the locally running API. Equally credible; arguably more "developer."
+- **Fallback:** terminal: `npm run test:postman` — the Postman CLI CLI output, every assertion passing against the locally running API. Equally credible; arguably more "developer."
 
 ## Screen 7 — The QA handoff summary
 
@@ -55,6 +55,6 @@ What to have on screen, in order. Pre-flight: `npm install` done, `npm run dev` 
 | Risk | Fallback |
 | --- | --- |
 | No Postman API credentials | Dry-run sync output (Screen 4) already shows the workspace targeting; import the JSON manually for Screens 5–6. |
-| No Postman app at all | Screen 5: collection JSON in VS Code. Screen 6: `npm run test:postman` (Newman). |
+| No Postman app at all | Screen 5: collection JSON in VS Code. Screen 6: `npm run test:postman` (the Postman CLI). |
 | No AI assistant on the demo machine | Screen 3: show the prompt, then run `npm run make:qa-ready` directly — "this is exactly what the assistant runs." |
 | API won't start | `npm run test:postman` prints a clear "start the API" message; restart `npm run dev`. Worst case, Screens 5 and 7 still carry the story. |

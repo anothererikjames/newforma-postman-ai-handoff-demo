@@ -40,7 +40,16 @@ npm install
 | `npm run generate:collection` | Just regenerate the Postman collection |
 | `npm run sync:postman` | Sync to the QA workspace (dry-run unless credentials set) |
 | `npm run qa:summary` | Just regenerate `demo/qa-handoff-summary.md` |
-| `npm run test:postman` | Run the generated collection against the local API with Newman |
+| `npm run test:postman` | Run the generated collection against the local API with the Postman CLI |
+| `npm run test:postman:newman` | Same run via Newman — no Postman login required (fallback) |
+
+**Collection runner:** `test:postman` uses the first-party **Postman CLI**.
+Install it from the [Postman CLI docs](https://learning.postman.com/docs/postman-cli/postman-cli-installation/)
+and authenticate once with `postman login --with-api-key $POSTMAN_API_KEY`.
+Optionally set `POSTMAN_COLLECTION_ID` to run the workspace copy of the
+collection instead of the local file — ID-based runs publish their results
+into the Postman workspace run history (QA visibility). No CLI or no login?
+The script falls back to Newman automatically.
 
 **The two-terminal demo flow:**
 
@@ -80,7 +89,7 @@ Follow [`demo/screen-flow.md`](demo/screen-flow.md) — 8 screens from "repo in 
 3. Show the branch's new endpoints (`src/routes/`, `demo/changed-endpoints.json`).
 4. Paste the hero prompt into the AI assistant → it runs `npm run make:qa-ready`.
 5. Show the output: collection generated, standard tests applied, dry-run sync to the **Newforma QA Workspace**, summary written.
-6. Import the collection + environment into Postman (or show `npm run test:postman` — Newman, all green).
+6. Import the collection + environment into Postman (or show `npm run test:postman` — the Postman CLI, all green).
 7. Open `demo/qa-handoff-summary.md` — *"this is what lands on the PR for QA."*
 8. Close: *"Developers keep their tools. QA gets a consistent Postman handoff."*
 
@@ -89,7 +98,7 @@ Follow [`demo/screen-flow.md`](demo/screen-flow.md) — 8 screens from "repo in 
 Nothing in the demo requires credentials:
 
 - `npm run make:qa-ready` runs the sync in **dry-run mode** and prints exactly what would be created/updated in the QA workspace.
-- Import the generated collection + environment into Postman manually (drag-and-drop both JSON files) and run the collection there, **or** show `npm run test:postman` (Newman CLI) — same tests, same results.
+- Import the generated collection + environment into Postman manually (drag-and-drop both JSON files) and run the collection there, **or** show `npm run test:postman` (the Postman CLI CLI) — same tests, same results.
 - The message is unchanged: Postman is the shared destination for the QA handoff; dry-run just means the last hop is simulated.
 
 To go live, copy `.env.example` to `.env`, set `POSTMAN_API_KEY` and `POSTMAN_WORKSPACE_ID`, and re-run `npm run sync:postman`. See [`demo/postman-workspace-setup.md`](demo/postman-workspace-setup.md).
