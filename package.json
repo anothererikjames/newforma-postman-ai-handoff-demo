@@ -18,7 +18,8 @@
     "qa:summary": "tsx scripts/qa-handoff-summary.ts",
     "make:qa-ready": "tsx scripts/make-qa-ready.ts",
     "test:postman": "tsx scripts/run-postman-tests.ts",
-    "test:postman:newman": "tsx scripts/run-postman-tests.ts --newman"
+    "test:postman:newman": "tsx scripts/run-postman-tests.ts --newman",
+    "demo:reset": "tsx scripts/generate-postman-collection.ts --baseline && node -e \"require('fs').rmSync('demo/qa-handoff-summary.md',{force:true})\" && echo 'Demo reset: collection is back to the stale pre-branch baseline.'"
   },
   "dependencies": {
     "express": "^4.21.2"

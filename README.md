@@ -42,6 +42,14 @@ npm install
 | `npm run qa:summary` | Just regenerate `demo/qa-handoff-summary.md` |
 | `npm run test:postman` | Run the generated collection against the local API with the Postman CLI |
 | `npm run test:postman:newman` | Same run via Newman — no Postman login required (fallback) |
+| `npm run demo:reset` | Reset between takes: collection back to the stale pre-branch baseline (7 requests), handoff summary removed |
+
+**Before/after, on camera:** the committed collection is QA's *stale* baseline —
+it does **not** cover the endpoints changed on this branch. Running the hero
+prompt (`make:qa-ready`) updates it to the full 16-request collection with the
+new folders, negative tests, and examples, so the QA handoff delta is visible
+both in the file diff and in Postman. `npm run demo:reset` returns to the
+baseline for the next take.
 
 **Collection runner:** `test:postman` uses the first-party **Postman CLI**.
 Install it from the [Postman CLI docs](https://learning.postman.com/docs/postman-cli/postman-cli-installation/)

@@ -447,14 +447,19 @@ function specsFromChangedEndpoint(endpoint: ChangedEndpoint): RequestSpec[] {
 // Main generation
 // ---------------------------------------------------------------------------
 
-export function generateCollection(): GenerationResult {
+export function generateCollection(options: { baseline?: boolean } = {}): GenerationResult {
   const changed = loadJson<ChangedEndpointsFile>(CHANGED_ENDPOINTS_PATH);
   const policy = loadJson<TestPolicy>(TEST_POLICY_PATH);
   const templates = loadTemplates();
 
+  // baseline = QA's stale "before" collection: covers the existing endpoints
+  // but NOT the ones changed on this branch. The demo's hero prompt turns
+  // baseline into the full collection, so the update is visible on camera.
   const specs: RequestSpec[] = [...baselineSpecs()];
-  for (const endpoint of changed.endpoints) {
-    specs.push(...specsFromChangedEndpoint(endpoint));
+  if (!options.baseline) {
+    for (const endpoint of changed.endpoints) {
+      specs.push(...specsFromChangedEndpoint(endpoint));
+    }
   }
 
   const folderOrder = ["Health", "Project Documents", "Project Submittals"];
@@ -531,7 +536,9 @@ export function generateCollection(): GenerationResult {
 }
 
 if (require.main === module) {
-  const result = generateCollection();
+  const baseline = process.argv.includes("--baseline");
+  const result = generateCollection({ baseline });
+  if (baseline) console.log("Mode: baseline (pre-branch collection — changed endpoints excluded)");
   console.log(`Generated collection: ${path.relative(REPO_ROOT, result.collectionPath)}`);
   console.log(`  Folders:   ${result.folders.join(", ")}`);
   console.log(`  Requests:  ${result.requestCount}`);
